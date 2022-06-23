@@ -25,6 +25,7 @@ import java.nio.channels.ClosedChannelException;
 import org.apache.hadoop.hbase.CallDroppedException;
 import org.apache.hadoop.hbase.CellScanner;
 import org.apache.hadoop.hbase.HBaseInterfaceAudience;
+import org.apache.hadoop.hbase.ServerName;
 import org.apache.hadoop.hbase.exceptions.TimeoutIOException;
 import org.apache.hadoop.hbase.monitoring.MonitoredRPCHandler;
 import org.apache.hadoop.hbase.security.User;
@@ -211,6 +212,10 @@ public class CallRunner {
 
       // Set the response
       InetSocketAddress address = rpcServer.getListenerAddress();
+      if (address!= null && address.toString().startsWith("0.0.0.0")) {
+        ServerName serverName = rpcServer.getMetrics().getHBaseServerWrapper().getServerName();
+        address = new InetSocketAddress(serverName.getHostname(), serverName.getPort());
+      }
       call.setResponse(null, null, CALL_DROPPED_EXCEPTION, "Call dropped, server "
         + (address != null ? address : "(channel closed)") + " is overloaded, please retry.");
       TraceUtil.setError(span, CALL_DROPPED_EXCEPTION);

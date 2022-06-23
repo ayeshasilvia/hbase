@@ -17,6 +17,7 @@
  */
 package org.apache.hadoop.hbase.ipc;
 
+import org.apache.hadoop.hbase.ServerName;
 import org.apache.hadoop.hbase.util.DirectMemoryUtils;
 import org.apache.yetus.audience.InterfaceAudience;
 
@@ -192,5 +193,10 @@ public class MetricsHBaseServerWrapperImpl implements MetricsHBaseServerWrapper 
     }
 
     return DirectMemoryUtils.getNettyDirectMemoryUsage();
+  }
+
+  @Override
+  public ServerName getServerName() {
+    return server.server.getServerName();
   }
 }
